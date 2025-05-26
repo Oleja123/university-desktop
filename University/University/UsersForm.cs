@@ -121,5 +121,27 @@ namespace University
                 await LoadData();
             }
         }
+
+        private void openButton_Click(object sender, EventArgs e)
+        {
+            if (dataGridView.SelectedRows.Count != 0)
+            {
+                try
+                {
+                    var selectedRow = dataGridView.SelectedRows[0];
+                    var value = selectedRow.Cells["Id"].Value!.ToString();
+                    var username = selectedRow.Cells["Username"].Value!.ToString();
+                    int userId = int.Parse(value!);
+                    Enabled = false;
+                    SessionsForm sessionsForm = new SessionsForm(_userService, userId, _token!, username!);
+                    sessionsForm.Show();
+                    Enabled = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Неизвестая ошибка");
+                }
+            }
+        }
     }
 }

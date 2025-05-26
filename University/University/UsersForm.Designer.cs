@@ -94,6 +94,7 @@
             openButton.TabIndex = 1;
             openButton.Text = "Открыть";
             openButton.UseVisualStyleBackColor = true;
+            openButton.Click += openButton_Click;
             // 
             // revokeButton
             // 
