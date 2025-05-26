@@ -21,15 +21,50 @@ namespace Services
         {
             if (Token == null)
             {
-                throw new ArgumentNullException("Необходимо получить токен для авторизации");
+                throw new Exception("Необходимо получить токен для авторизации");
             }
             using var client = HttpClientFactory.CreateUnsafeClient();
             string apiUrl = ConfigurationManager.AppSettings["ApiUrl"]!;
             try
             {
-                string request = apiUrl + "/users";
+                string request = apiUrl + $"/users?page={page}";
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
                 var response = await client.GetAsync(request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == HttpStatusCode.Forbidden)
+                    {
+                        throw new Exception("Недостаточно прав");
+                    }
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        throw new Exception("Необходимо авторизоваться");
+                    }
+                    throw new Exception("Ошибка доступа к API");
+                }
+                string jsonString = await response.Content.ReadAsStringAsync();
+                return UserPaginatedList.Deserealise(jsonString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task<User> RevokeToken(int userId)
+        {
+            if (Token == null)
+            {
+                throw new Exception("Необходимо получить токен для авторизации");
+            }
+            using var client = HttpClientFactory.CreateUnsafeClient();
+            string apiUrl = ConfigurationManager.AppSettings["ApiUrl"]!;
+            try
+            {
+                string request = apiUrl + $"/users/{userId}/revoke_token";
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+                var response = await client.PutAsync(request, new StringContent(""));
                 if (!response.IsSuccessStatusCode)
                 {
                     if (response.StatusCode == HttpStatusCode.Forbidden)
@@ -39,7 +74,7 @@ namespace Services
                     throw new Exception("Ошибка доступа к API");
                 }
                 string jsonString = await response.Content.ReadAsStringAsync();
-                return UserPaginatedList.Deserealise(jsonString);
+                return JsonSerializer.Deserialize<User>(jsonString)!;
             }
             catch (Exception e)
             {

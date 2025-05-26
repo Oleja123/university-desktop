@@ -5,6 +5,8 @@ namespace University
     public partial class LoginForm : Form
     {
         private readonly AuthService _authService;
+        public string Token { get; private set; }
+        public string Username { get; private set; }
         public LoginForm()
         {
             InitializeComponent();
@@ -19,9 +21,10 @@ namespace University
                 var password = passwordTextBox.Text;
                 var token = await _authService.Login(username, password);
                 MessageBox.Show("Вы авторизованы");
-                UsersForm usersForm = new UsersForm(token);
-                usersForm.Show();
-                this.Close();
+                Token = token;
+                Username = username;
+                DialogResult = DialogResult.OK;
+                Close();
             }
             catch(Exception ex)
             {

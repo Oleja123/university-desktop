@@ -18,7 +18,7 @@ namespace University
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             var form = new LoginForm();
-            Application.Run(new LoginForm());
+            Application.Run(new UsersForm());
         }
     }
 }

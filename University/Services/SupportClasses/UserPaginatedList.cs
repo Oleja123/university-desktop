@@ -35,7 +35,7 @@ namespace Services.SupportClasses
             UserPaginatedList cur = new UserPaginatedList();
             cur.Users = JsonSerializer.Deserialize<List<User>>(root.GetProperty("items"));
             cur.Page = JsonSerializer.Deserialize<int>(root.GetProperty("_meta").GetProperty("page").ToString()!);
-            int totalPages = JsonSerializer.Deserialize<int>(root.GetProperty("_meta").GetProperty("page").ToString()!);
+            int totalPages = JsonSerializer.Deserialize<int>(root.GetProperty("_meta").GetProperty("total_pages").ToString()!);
             if (cur.Page != totalPages)
             {
                 cur.NextPage = cur.Page + 1;
